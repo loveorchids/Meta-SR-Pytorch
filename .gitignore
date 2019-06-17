@@ -8,6 +8,6 @@ __pycache__
 */.ipynb_checkpoints
 */**/.ipynb_checkpoints
 */**/**/.ipynb_checkpoints
-./benchmark
-./DIV2K
-./experiment
+benchmark
+DIV2K
+experiment
