@@ -14,6 +14,7 @@ from torch.utils.data.dataloader import _DataLoaderIter
 
 from torch.utils.data.dataloader import ExceptionWrapper
 from torch.utils.data.dataloader import _use_shared_memory
+
 from torch.utils.data.dataloader import _pin_memory_loop
 from torch.utils.data.dataloader import numpy_type_map
 from torch.utils.data.dataloader import default_collate
@@ -105,8 +106,8 @@ class _MSDataLoaderIter(_DataLoaderIter):
                     maybe_device_id = None
                 self.worker_manager_thread = threading.Thread(
                     target=_pin_memory_loop,
-                    args=(self.worker_result_queue, self.data_queue, self.done_event, self.pin_memory,
-                          maybe_device_id))
+                    args=(self.worker_result_queue, self.data_queue, maybe_device_id, self.done_event,
+                          ))
                 self.worker_manager_thread.daemon = True
                 self.worker_manager_thread.start()
             else:

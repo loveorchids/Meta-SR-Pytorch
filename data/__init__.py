@@ -16,7 +16,8 @@ class Data:
                 trainset,
                 batch_size=args.batch_size,
                 shuffle=True,
-                pin_memory=not args.cpu
+                pin_memory=False
+                #pin_memory=not args.cpu
             )
 
         if args.data_test in ['Set5', 'Set14', 'B100', 'Manga109', 'Urban100']:

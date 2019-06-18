@@ -1,4 +1,4 @@
-import argparse
+import argparse, os
 import template
 
 parser = argparse.ArgumentParser(description='EDSR and MDSR')
@@ -13,13 +13,13 @@ parser.add_argument('--n_threads', type=int, default=6,
                     help='number of threads for data loading')
 parser.add_argument('--cpu', action='store_true',
                     help='use cpu only')
-parser.add_argument('--n_GPUs', type=int, default=3,
+parser.add_argument('--n_GPUs', type=int, default=2,
                     help='number of GPUs')
 parser.add_argument('--seed', type=int, default=1,
                     help='random seed')
 
 # Data specifications
-parser.add_argument('--dir_data', type=str, default='./',
+parser.add_argument('--dir_data', type=str, default='~/Pictures/dataset/SR',
                     help='dataset directory')
 parser.add_argument('--dir_demo', type=str, default='../test',
                     help='demo image directory')
@@ -33,7 +33,7 @@ parser.add_argument('--ext', type=str, default='sep',
                     help='dataset file extension')
 parser.add_argument('--scale', type=str, default='',
                     help='super resolution scale')
-parser.add_argument('--patch_size', type=int, default=50,
+parser.add_argument('--patch_size', type=int, default=75,
                     help='output patch size')
 parser.add_argument('--rgb_range', type=int, default=255,
                     help='maximum value of RGB')
@@ -89,7 +89,7 @@ parser.add_argument('--test_every', type=int, default=1000,
                     help='do test per every N batches')
 parser.add_argument('--epochs', type=int, default=1000,
                     help='number of epochs to train')
-parser.add_argument('--batch_size', type=int, default=16,
+parser.add_argument('--batch_size', type=int, default=6,
                     help='input batch size for training')
 parser.add_argument('--split_batch', type=int, default=1,
                     help='split the batch into smaller chunks')
@@ -161,6 +161,7 @@ else:
 print(args.scale)
 if args.epochs == 0:
     args.epochs = 1e8
+args.dir_data = os.path.expanduser(args.dir_data)
 
 for arg in vars(args):
     if vars(args)[arg] == 'True':

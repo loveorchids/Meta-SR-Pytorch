@@ -96,7 +96,7 @@ class RDN(nn.Module):
         x += f__1
 
         # Up-sampling net
-        up_x, up_input = upsampling(x,input_sub,2)
+        up_x, up_input = upsampling(x, input_sub, scale)
         w_x = self.weight_conv(up_x)
 
         x = up_input + w_x

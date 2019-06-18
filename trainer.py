@@ -33,14 +33,14 @@ class Trainer():
     ######by given the scale and the size of input image
     ######we caculate the input matrix for the weight prediction network
     ###### input matrix for weight prediction network
-    def input_matrix_wpn(self,inH, inW, scale, add_scale=True):
+    def input_matrix_wpn(self, inH, inW, scale, add_scale=True):
         '''
         inH, inW: the size of the feature maps
         scale: is the upsampling times
         '''
         outH, outW = int(scale*inH), int(scale*inW)
 
-        #### mask records which pixel is invalid, 1 valid or o invalid
+        #### mask records which pixel is invalid, 1 valid or 0 invalid
         #### h_offset and w_offset caculate the offset to generate the input matrix
         scale_int = int(math.ceil(scale))
         h_offset = torch.ones(inH, scale_int, 1)
@@ -124,6 +124,8 @@ class Trainer():
         self.model.train()
 
         timer_data, timer_model = utility.timer(), utility.timer()
+        # lr, hr, _ represent lr_tensor, hr_tensor and filename in "__getitem__" of "./data/multiscalesrdata.py"
+        # idx_scale is appended in "_ms_loop" of "./dataloader.py"
         for batch, (lr, hr, _, idx_scale) in enumerate(self.loader_train):
             # self.prepare will convert the tensor to half and send to cuda
             lr, hr = self.prepare(lr, hr)
@@ -133,14 +135,17 @@ class Trainer():
             _,_,outH,outW = hr.size()
             #TODO: self.args.scale[idx_scale]是什么意思
             scale_coord_map, mask = self.input_matrix_wpn(H,W,self.args.scale[idx_scale])  ###  get the position matrix, mask
-
+            """
             if self.args.n_GPUs>1:
                 scale_coord_map = torch.cat([scale_coord_map]*self.args.n_GPUs,0)
             else:
                 scale_coord_map = scale_coord_map.cuda()
-            
+            """
+
             self.optimizer.zero_grad()
-            sr = self.model(lr, idx_scale, scale_coord_map)
+            # 感觉scale coord map并没有被怎么用
+            #sr = self.model(lr, idx_scale, scale_coord_map)
+            sr = self.model(lr, idx_scale, int(self.args.scale[idx_scale]))
             re_sr = torch.masked_select(sr,mask.cuda())
             re_sr = re_sr.contiguous().view(N,C,outH,outW)
             loss = self.loss(re_sr, hr)

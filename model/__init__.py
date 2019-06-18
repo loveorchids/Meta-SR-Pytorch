@@ -97,7 +97,11 @@ class Model(nn.Module):
             )
         elif resume == 0:
             if pre_train != '.':
-                print('Loading model from {}'.format(pre_train))
+                pre_train = os.path.join(os.getcwd(), pre_train)
+                if os.path.exists(pre_train):
+                    print('Loading model from:\n{}'.format(pre_train))
+                else:
+                    raise FileNotFoundError("%s not found"%(pre_train))
                 self.get_model().load_state_dict(
                     torch.load(pre_train, **kwargs),
                     strict=False

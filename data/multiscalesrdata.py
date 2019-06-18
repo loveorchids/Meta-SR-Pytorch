@@ -83,8 +83,7 @@ class SRData(data.Dataset):
                         )
 
         if train:
-            self.repeat \
-                = args.test_every // (len(self.images_hr) // args.batch_size)
+            self.repeat = args.test_every // (len(self.images_hr) // args.batch_size)
 
     # Below functions as used to prepare images
     def _scan(self):
@@ -92,16 +91,15 @@ class SRData(data.Dataset):
             glob.glob(os.path.join(self.dir_hr, '*' + self.ext[0]))
         )
         names_lr = [[] for _ in self.scale]
-        print(len(names_hr))
         for f in names_hr:
             filename, _ = os.path.splitext(os.path.basename(f))
             for si, s in enumerate(self.scale):
-                names_lr[si].append(os.path.join(
-                    self.dir_lr, 'X{:.2f}/{}{}'.format(
-                        s, filename, self.ext[1]
-                    )
-                ))
-
+                path = os.path.join(self.dir_lr, 'X{:d}/{}x{:d}{}'.format(int(s), filename, int(s), self.ext[1]))
+                if not os.path.exists(path):
+                    raise FileNotFoundError()
+                names_lr[si].append(path )
+        assert all([len(lr) == len(names_hr) for lr in names_lr])
+        print("Loaded %d samples from both HR and LR sources"%(len(names_hr)))
         return names_hr, names_lr
 
     def _set_filesystem(self, dir_data):
